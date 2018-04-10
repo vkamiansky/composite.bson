@@ -10,11 +10,11 @@
     <Version>$(APPVEYOR_BUILD_VERSION)</Version>
     <Authors>Vitaly Kamiansky, Vladimir Ilin</Authors>
     <Company>FirstLine Software</Company>
-    <PackageLicenseUrl>https://github.com/vkamiansky/composite.test.infrastructure/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/vkamiansky/composite.test.infrastructure</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/vkamiansky/composite.bson/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/vkamiansky/composite.bson</PackageProjectUrl>
     <PackageTags>composite;seq;fsharp;enumerable;lazy;sequence;bson</PackageTags>
-    <RepositoryUrl>https://github.com/vkamiansky/composite.test.infrastructure.git</RepositoryUrl>
-    <Description>Sequence composite interface to BSON. Powered by Newtonsoft.Json.Bson.</Description>
+    <RepositoryUrl>https://github.com/vkamiansky/composite.bson.git</RepositoryUrl>
+    <Description>Sequence composite interface to BSON. Powered by Newtonsoft.Json.Bson and Project Composite.</Description>
     <Copyright>Copyright (c) 2018, Vitaly Kamiansky, Vladimir Ilin</Copyright>
   </PropertyGroup>
 
