@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <DocumentationFile>$(OutputPath)\netstandard2.0\Composite.Bson.xml</DocumentationFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <IncludeSource>true</IncludeSource>
+    <PackageId>Composite.Bson</PackageId>
+    <Title>Project Composite: BSON Interface</Title>
+    <Version>$(APPVEYOR_BUILD_VERSION)</Version>
+    <Authors>Vitaly Kamiansky, Vladimir Ilin</Authors>
+    <Company>FirstLine Software</Company>
+    <PackageLicenseUrl>https://github.com/vkamiansky/composite.test.infrastructure/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/vkamiansky/composite.test.infrastructure</PackageProjectUrl>
+    <PackageTags>composite;seq;fsharp;enumerable;lazy;sequence;bson</PackageTags>
+    <RepositoryUrl>https://github.com/vkamiansky/composite.test.infrastructure.git</RepositoryUrl>
+    <Description>Sequence composite interface to BSON. Powered by Newtonsoft.Json.Bson.</Description>
+    <Copyright>Copyright (c) 2018, Vitaly Kamiansky, Vladimir Ilin</Copyright>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Comp.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Composite" Version="1.0.55" />
+    <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.1" />
+  </ItemGroup>
+
+</Project>
