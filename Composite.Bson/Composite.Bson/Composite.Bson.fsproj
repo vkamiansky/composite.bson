@@ -19,11 +19,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Comp.fs" />
+    <Compile Include="Types.fs" />
+    <Compile Include="MComp.fs" />
+    <Compile Include="BsonComposite.fs" />
+    <Compile Include="CompositeExtensions.fs" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Composite" Version="1.0.55" />
+    <PackageReference Include="Composite" Version="1.5.2" />
     <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.1" />
   </ItemGroup>
 

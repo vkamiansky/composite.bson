@@ -18,12 +18,12 @@ namespace Composite.Cs.Tests.Composites
             var serObj = new {
                 Name = "test result",
                 Thing = new { 
-                    Name = "bad",
+                    Name = "name1",
                     Hour = "now"
                 },
                 HardCase = new [] {
-                    "beauty",
-                    "another beauty"
+                    "item",
+                    "another item"
                 },
                 Me = "vk",
                 Var = DateTime.Now,
@@ -43,15 +43,14 @@ namespace Composite.Cs.Tests.Composites
                 serializer.Serialize(writer, serObj);
             }
 
-            var result = Composite.Bson.Comp.ofBson(ms.ToArray());
-
-            var thingsubtree = result.ToComponents().Select(x => x.ToStringShort()).ToArray();
-
-            //var thingOfThings = result.ToComponents().Skip(1).Take(1).Select(x => x.ToStringShort()).ToArray().First();
-
-            //var enumu = result.AsEnumerable().FirstOrDefault(x => x.Key == "Thing.Name");
-           // var txtThing = thingsubtree.ToStringShort();
+            var result = BsonComposite.FromBytes(ms.ToArray());
             var txt = result.ToStringShort();
+
+            var bytes =  result.ToBson();
+
+            var readBackStuff = BsonComposite.FromBytes(bytes).ToStringShort();
+
+            Assert.Equal(txt, readBackStuff);
         }
     }
 }
