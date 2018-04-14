@@ -13,7 +13,7 @@ namespace Composite.Cs.Tests.Composites
     public class BsonTests
     {
         [Fact]
-        public void TransformationTest()
+        public void SerializationCycleTest()
         {
             var serObj = new {
                 Name = "test result",
@@ -43,14 +43,17 @@ namespace Composite.Cs.Tests.Composites
                 serializer.Serialize(writer, serObj);
             }
 
-            var result = BsonComposite.FromBytes(ms.ToArray());
-            var txt = result.ToStringShort();
+            var res = BsonComposite.FromStream(new MemoryStream(ms.ToArray()));
+            var resStr = res.ToStringShort();
 
-            var bytes =  result.ToBson();
+            res = BsonComposite.FromStream(new MemoryStream(ms.ToArray()));
+            var outStream = new MemoryStream();
+            res.WriteToStream(outStream);
 
-            var readBackStuff = BsonComposite.FromBytes(bytes).ToStringShort();
+            var res2 = BsonComposite.FromStream(new MemoryStream(outStream.ToArray()));
+            var res2Str = res2.ToStringShort();
 
-            Assert.Equal(txt, readBackStuff);
+            Assert.Equal(resStr, res2Str);
         }
     }
 }

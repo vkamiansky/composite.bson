@@ -11,9 +11,11 @@ open Composite
 type KeyValuePair = { Key: string; Value: obj }
 
 [<RequireQualifiedAccess>]
-module MComp =
+module BsonComp =
 
-    let ofBsonBytes (bson: byte[]) =
+    ///<summary>Creates a new marked sequence composite that will use the given BSON stream as source.</summary>
+    ///<param name="inputStream">A BSON stream.</param>
+    let ofBsonStream (inputStream: Stream) =
         let toPath containerPath prop =
             if (String.IsNullOrWhiteSpace(containerPath) && String.IsNullOrWhiteSpace(prop)) then String.Empty else sprintf "%s.%s" containerPath prop
         let toSomeValueToken elementType containerPath prop value =
@@ -60,17 +62,18 @@ module MComp =
                     | _ -> failwith "Unknown BSON token type."
 
         MarkedComposite { Mark = DocumentMark; Components = seq{
-            use stream = new MemoryStream(bson)
-            use reader = new BsonDataReader(stream)
+            use reader = new BsonDataReader(inputStream)
             let mutable tokenOption = (getElementOption reader String.Empty String.Empty)
             while tokenOption |> Option.isSome do
                   yield tokenOption.Value
                   tokenOption <- (getElementOption reader String.Empty String.Empty)
         }}
 
-    let toBson (source: Composite<BsonElementMark, obj>) =
-        use stream = new MemoryStream()
-        use writer = new BsonDataWriter(stream)
+    ///<summary>Writes the contents of a BSON composite to an output stream.</summary>
+    ///<param name="outputStream">The output stream.</param>
+    ///<param name="source">The input composite.</param>
+    let writeToStream (outputStream: Stream)  (inputComposite: Composite<BsonElementMark, obj>) =
+        use writer = new BsonDataWriter(outputStream)
 
         let rec writeElement element isProperty =
             match element with
@@ -109,8 +112,5 @@ module MComp =
                 | BsonBoolean -> writer.WriteValue(unbox<bool>v)
             | _ -> failwith (sprintf "Unable to serialize the element %A" element)
 
-        writeElement source false
+        writeElement inputComposite false
         writer.Flush()
-        stream.ToArray()
-
-

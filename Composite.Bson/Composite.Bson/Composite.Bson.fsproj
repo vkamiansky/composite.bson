@@ -20,9 +20,9 @@
 
   <ItemGroup>
     <Compile Include="Types.fs" />
-    <Compile Include="MComp.fs" />
+    <Compile Include="BsonComp.fs" />
     <Compile Include="BsonComposite.fs" />
-    <Compile Include="CompositeExtensions.fs" />
+    <Compile Include="BsonCompositeExtensions.fs" />
   </ItemGroup>
 
   <ItemGroup>
