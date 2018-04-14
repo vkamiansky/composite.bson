@@ -8,10 +8,70 @@ open Newtonsoft.Json
 open Newtonsoft.Json.Bson
 open Composite
 
-type KeyValuePair = { Key: string; Value: obj }
-
 [<RequireQualifiedAccess>]
 module BsonComp =
+
+    ///<summary>Initializes a new BSON sequence composite with an object at the root.</summary>
+    let create () =
+        MarkedComposite { Mark = DocumentMark
+                          Components = seq{
+                              yield MarkedComposite { Mark = ObjectMark { Path = String.Empty; Property = String.Empty }; Components = Seq.empty<Composite<BsonElementMark, obj>> }
+                          }}
+
+    ///<summary>Ensures that an array will be present in the container marked with the given path and will be marked the following name.</summary>
+    ///<param name="containerPath">The path of the container.</param>
+    ///<param name="name">The name of the array.</param>
+    ///<param name="source">A BSON composite.</param>
+    let ensureHasArray (containerPath: string) (name: string) (source: Composite<BsonElementMark, obj>) =
+        source |> MComp.ensureHasContainer 
+                    (ObjectMark {Path = containerPath; Property = String.Empty})
+                    (ArrayMark {Path = sprintf "%s.%s" containerPath name; Property = name})
+                    (fun c a -> match c, a with
+                                | ObjectMark{Path = pc}, ObjectMark{Path = pa} -> String.Equals(pc, pa, StringComparison.OrdinalIgnoreCase)
+                                | ObjectMark{Path = pc}, ArrayMark{Path = pa} -> String.Equals(pc, pa, StringComparison.OrdinalIgnoreCase)
+                                | ArrayMark{Path = pc}, ArrayMark{Path = pa} -> String.Equals(pc, pa, StringComparison.OrdinalIgnoreCase)
+                                | _ -> false)
+
+    ///<summary>Ensures that an object will be present in the container marked with the given path and will be marked the following name.</summary>
+    ///<param name="containerPath">The path of the container.</param>
+    ///<param name="name">The name of the object.</param>
+    ///<param name="source">A BSON composite.</param>
+    let ensureHasObject (containerPath: string) (name: string) (source: Composite<BsonElementMark, obj>) =
+        source |> MComp.ensureHasContainer 
+                    (ArrayMark {Path = containerPath; Property = String.Empty})
+                    (ObjectMark {Path = sprintf "%s.%s" containerPath name; Property = name})
+                    (fun c a -> match c, a with
+                                | ArrayMark{Path = pc}, ObjectMark{Path = pa} -> String.Equals(pc, pa, StringComparison.OrdinalIgnoreCase)
+                                | ArrayMark{Path = pc}, ArrayMark{Path = pa} -> String.Equals(pc, pa, StringComparison.OrdinalIgnoreCase)
+                                | ObjectMark{Path = pc}, ArrayMark{Path = pa} -> String.Equals(pc, pa, StringComparison.OrdinalIgnoreCase)
+                                | _ -> false)
+
+    ///<summary>Set the value of the given name in the container marked with the given path.</summary>
+    ///<param name="containerPath">The path of the container.</param>
+    ///<param name="name">The name of the value.</param>
+    ///<param name="name">The value.</param>
+    ///<param name="source">A BSON composite.</param>
+    let setValue (containerPath: string) (name: string) (value: obj) (source: Composite<BsonElementMark, obj>) =
+        source |> MComp.setValue 
+                    (ObjectMark {Path = containerPath; Property = String.Empty})
+                    (ValueMark {
+                        Type = match value with
+                                | null -> BsonEmpty
+                                | :? string -> BsonString
+                                | :? int -> BsonInteger
+                                | :? bool -> BsonBoolean
+                                | :? float -> BsonFloat
+                                | :? DateTime -> BsonDate
+                                | :? (byte []) -> BsonBytes
+                                | _ -> BsonUnknown
+                        Path = sprintf "%s.%s" containerPath name
+                        Property = name})
+                    (value)
+                    (fun c a -> match c, a with
+                                | ObjectMark{Path = pc}, ObjectMark{Path = pa} -> String.Equals(pc, pa, StringComparison.OrdinalIgnoreCase)
+                                | ObjectMark{Path = pc}, ArrayMark{Path = pa} -> String.Equals(pc, pa, StringComparison.OrdinalIgnoreCase)
+                                | ValueMark{Path = pc}, ValueMark{Path = pa} -> String.Equals(pc, pa, StringComparison.OrdinalIgnoreCase)
+                                | _ -> false)
 
     ///<summary>Creates a new marked sequence composite that will use the given BSON stream as source.</summary>
     ///<param name="inputStream">A BSON stream.</param>
