@@ -17,7 +17,7 @@ type BsonCompositeExtensions () =
         source |> BsonComp.writeToStream outputStream
 
     [<Extension>]
-    ///<summary>Ensures that an array will be present in the container marked with the given path and will be marked the following name.</summary>
+    ///<summary>Ensures that an array will be present in the container marked with the given path and will be marked with the following name.</summary>
     ///<param name="source">A BSON composite.</param>
     ///<param name="containerPath">The path of the container.</param>
     ///<param name="name">The name of the array.</param>
@@ -25,7 +25,7 @@ type BsonCompositeExtensions () =
         source |> BsonComp.ensureHasArray containerPath name
 
     [<Extension>]
-    ///<summary>Ensures that an object will be present in the container marked with the given path and will be marked the following name.</summary>
+    ///<summary>Ensures that an object will be present in the container marked with the given path and will be marked with the following name.</summary>
     ///<param name="source">A BSON composite.</param>
     ///<param name="containerPath">The path of the container.</param>
     ///<param name="name">The name of the object.</param>

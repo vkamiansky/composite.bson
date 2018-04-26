@@ -18,7 +18,7 @@ module BsonComp =
                               yield MarkedComposite { Mark = ObjectMark { Path = String.Empty; Property = String.Empty }; Components = Seq.empty<Composite<BsonElementMark, obj>> }
                           }}
 
-    ///<summary>Ensures that an array will be present in the container marked with the given path and will be marked the following name.</summary>
+    ///<summary>Ensures that an array will be present in the container marked with the given path and will be marked with the following name.</summary>
     ///<param name="containerPath">The path of the container.</param>
     ///<param name="name">The name of the array.</param>
     ///<param name="source">A BSON composite.</param>
@@ -32,7 +32,7 @@ module BsonComp =
                                 | ArrayMark{Path = pc}, ArrayMark{Path = pa} -> String.Equals(pc, pa, StringComparison.OrdinalIgnoreCase)
                                 | _ -> false)
 
-    ///<summary>Ensures that an object will be present in the container marked with the given path and will be marked the following name.</summary>
+    ///<summary>Ensures that an object will be present in the container marked with the given path and will be marked with the following name.</summary>
     ///<param name="containerPath">The path of the container.</param>
     ///<param name="name">The name of the object.</param>
     ///<param name="source">A BSON composite.</param>
@@ -73,9 +73,9 @@ module BsonComp =
                                 | ValueMark{Path = pc}, ValueMark{Path = pa} -> String.Equals(pc, pa, StringComparison.OrdinalIgnoreCase)
                                 | _ -> false)
 
-    ///<summary>Creates a new marked sequence composite that will use the given BSON stream as source.</summary>
-    ///<param name="inputStream">A BSON stream.</param>
-    let ofBsonStream (inputStream: Stream) =
+    ///<summary>Creates a new marked sequence composite that will use the BSON stream acquired through the use of the given function as source.</summary>
+    ///<param name="getInputStream">A BSON stream producing function.</param>
+    let ofBsonStreamFunction (getInputStream: unit->Stream) =
         let toPath containerPath prop =
             if (String.IsNullOrWhiteSpace(containerPath) && String.IsNullOrWhiteSpace(prop)) then String.Empty else sprintf "%s.%s" containerPath prop
         let toSomeValueToken elementType containerPath prop value =
@@ -122,12 +122,17 @@ module BsonComp =
                     | _ -> failwith "Unknown BSON token type."
 
         MarkedComposite { Mark = DocumentMark; Components = seq{
-            use reader = new BsonDataReader(inputStream)
+            use reader = new BsonDataReader(getInputStream())
             let mutable tokenOption = (getElementOption reader String.Empty String.Empty)
             while tokenOption |> Option.isSome do
                   yield tokenOption.Value
                   tokenOption <- (getElementOption reader String.Empty String.Empty)
         }}
+
+    ///<summary>Creates a new marked sequence composite that will use the given BSON stream as source.</summary>
+    ///<param name="inputStream">A BSON stream.</param>
+    let ofBsonStream (inputStream: Stream) =
+        ofBsonStreamFunction (fun () -> inputStream)
 
     ///<summary>Writes the contents of a BSON composite to an output stream.</summary>
     ///<param name="outputStream">The output stream.</param>
